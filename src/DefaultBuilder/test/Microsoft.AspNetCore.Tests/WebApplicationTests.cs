@@ -669,6 +669,16 @@ namespace Microsoft.AspNetCore.Tests
             Assert.ThrowsAny<Exception>(() => builder.Build());
         }
 
+        [Fact]
+        public void WebApplicationBuilder_UseStartupAndConfigureAreNotSupportedByWebHost()
+        {
+            var builder = WebApplication.CreateBuilder();
+
+            Assert.Throws<NotSupportedException>(() => builder.WebHost.Configure(app => { }));
+            Assert.Throws<NotSupportedException>(() => builder.WebHost.UseStartup<MyStartup>());
+            Assert.Throws<NotSupportedException>(() => builder.WebHost.UseStartup(typeof(MyStartup)));
+        }
+
         private class Service : IService { }
         private interface IService { }
 
@@ -676,6 +686,19 @@ namespace Microsoft.AspNetCore.Tests
         {
             public Service2(Service service)
             {
+            }
+        }
+
+        private class MyStartup : IStartup
+        {
+            public void Configure(IApplicationBuilder app)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IServiceProvider ConfigureServices(IServiceCollection services)
+            {
+                throw new NotImplementedException();
             }
         }
 
