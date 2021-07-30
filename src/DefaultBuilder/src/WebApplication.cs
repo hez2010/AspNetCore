@@ -79,6 +79,18 @@ namespace Microsoft.AspNetCore.Builder
         internal ApplicationBuilder ApplicationBuilder { get; }
 
         IServiceProvider IEndpointRouteBuilder.ServiceProvider => Services;
+        
+        private static Assembly? TryGetCallingAssembly()
+        {
+            try
+            {
+                return Assembly.GetCallingAssembly();
+            }
+            catch
+            {
+                return Assembly.GetEntryAssembly();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebApplication"/> class with preconfigured defaults.
@@ -86,7 +98,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="args">Command line arguments</param>
         /// <returns>The <see cref="WebApplication"/>.</returns>
         public static WebApplication Create(string[]? args = null) =>
-            new WebApplicationBuilder(Assembly.GetCallingAssembly(), args).Build();
+            new WebApplicationBuilder(TryGetCallingAssembly(), args).Build();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebApplicationBuilder"/> class with preconfigured defaults.
@@ -94,7 +106,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="args">Command line arguments</param>
         /// <returns>The <see cref="WebApplicationBuilder"/>.</returns>
         public static WebApplicationBuilder CreateBuilder(string[]? args = null) =>
-            new WebApplicationBuilder(Assembly.GetCallingAssembly(), args);
+            new WebApplicationBuilder(TryGetCallingAssembly(), args);
 
         /// <summary>
         /// Start the application.
